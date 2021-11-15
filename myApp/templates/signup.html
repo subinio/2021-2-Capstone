@@ -1,0 +1,178 @@
+<!-- 
+THEME: Small Apps | Bootstrap App Landing Template
+VERSION: 1.0.0
+AUTHOR: Themefisher
+
+HOMEPAGE: https://themefisher.com/products/small-apps-free-app-landing-page-template/
+DEMO: https://demo.themefisher.com/small-apps/
+GITHUB: https://github.com/themefisher/Small-Apps-Bootstrap-App-Landing-Template
+
+Get HUGO Version : https://themefisher.com/products/small-apps-hugo-app-landing-theme/
+
+WEBSITE: https://themefisher.com
+TWITTER: https://twitter.com/themefisher
+FACEBOOK: https://www.facebook.com/themefisher
+-->
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+
+  <!-- Basic Page Needs
+  ================================================== -->
+  <meta charset="utf-8">
+  <title>코로나 격리자 심리 상태 모니터링 시스템</title>
+
+  <!-- Mobile Specific Metas
+  ================================================== -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="Bootstrap App Landing Template">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta name="author" content="Themefisher">
+  <meta name="generator" content="Themefisher Small Apps Template v1.0">
+
+  <!-- Favicon -->
+  <link rel="shortcut icon" type="image/x-icon" href="../static/images/favicon.png" />
+  
+  <!-- PLUGINS CSS STYLE -->
+  <link rel="stylesheet" href="../static/plugins/bootstrap/bootstrap.min.css">
+  <link rel="stylesheet" href="../static/plugins/themify-icons/themify-icons.css">
+  <link rel="stylesheet" href="../static/plugins/slick/slick.css">
+  <link rel="stylesheet" href="../static/plugins/slick/slick-theme.css">
+  <link rel="stylesheet" href="../static/plugins/fancybox/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="../static/plugins/aos/aos.css">
+
+  <!-- CUSTOM CSS -->
+  <link href="../static/css/style.css" rel="stylesheet">
+  <link href="../static/css/mystyle.css" rel="stylesheet">
+
+  <link href="http://fonts.googleapis.com/earlyaccess/jejugothic.css" rel="stylesheet">
+  <style>
+    .jg{font-family: 'Jeju Gothic', sans-serif;}
+    body{font-family: 'Jeju Gothic', sans-serif;}
+  </style>
+
+</head>
+
+<body class="body-wrapper" data-spy="scroll" data-target=".privacy-nav">
+
+<!--=============================
+=            Sign Up            =
+==============================-->
+
+<section class="user-login section">
+	<div class="container">
+		<div class="row">
+			<div class="" style = "margin: 0 auto;">
+				<div class="block" style="width: 500px;">
+					<!-- Image 
+					<div class="image align-self-center"><img class="img-fluid" src="images/Login/sign-up.jpg" alt="desk-image">
+					</div>-->
+					<!-- Content -->
+					<div class="content text-center">
+						<div class="logo" style="margin-bottom: 30px !important;">
+							<a href="index.html"><img src="../static/images/favicon.png" alt=""></a>
+						</div>
+						<div class="title-text">
+							<h2 style="border-bottom: 1px solid #cccccc; padding-bottom: 30px;">회원가입</h2>
+						</div>
+						<form action="{% url 'signup' %}" method="post">
+              {% csrf_token %}
+              <p style="color: black !important;">
+              <!-- Select Dr or Pt -->
+              <p style="color: red;">
+              둘 중 하나를 반드시 선택하세요.<br>
+              <label class="box-radio-input"><input type="radio" name="who" value="doctor"><span>의료진</span></label>
+              <label class="box-radio-input"><input type="radio" name="who" value="patient" checked="checked"><span>격리자(환자)</span></label>
+              </p><br>
+              <!-- ID -->
+              아이디 
+							<input class="form-control main" type="text" name= "id" placeholder="ID" required><br>
+              <!-- Password -->
+              비밀번호
+							<input class="form-control main" type="password" name= "pw" placeholder="Password" required  style="font-family: sans-serif;"><br>
+							<!-- Username -->
+              이름
+							<input class="form-control main" type="text" name= "name" placeholder="Your Name" required><br>
+
+              <div id ="forPatient">
+                <!-- Username -->
+                전화번호
+                <input class="form-control main" type="tel" name= "phone" pattern="[0-9]{3}-[0-9]{4}-[0-9]{4}" id="phoneNum" placeholder="Your Phone Number" ><br>
+                <!-- Birth -->
+                생일
+                <input class="form-control main" type="date" name= "birth" ><br>
+                <!-- Gender -->
+                성별
+                <div class="form-control main">
+                <input class="" type="radio" name="gender" value="M" checked>&nbsp;남자
+                <span style = "padding-left: 100px;">
+                <input class="" type="radio" name="gender" value="F">&nbsp;여자
+                </div><br>
+                <!-- Occupation -->
+                직업군
+                <input class="form-control main" type="text" name= "occupation" placeholder="Your Occupation" ><br>
+                <!-- Institution -->
+                격리 기관
+                <select class="form-control main" name="inst_city1" id="inst_city1" onclick="cityCategory()" onchange="centerCategory(this)" >
+                  <option>지역을 선택해 주세요</option>
+                </select>
+                
+                <select class="form-control main" name="inst_center1" id="inst_center1" >
+                <option>센터명을 선택해 주세요</option>
+                </select>
+              </div>
+              
+              <div id ="forDoctor" style="display: none;">
+                소속 기관
+                <select class="form-control main" name="inst_city2" id="inst_city2" onclick="cityCategory()" onchange="centerCategory(this)" >
+                  <option>지역을 선택해 주세요</option>
+                </select>
+                
+                <select class="form-control main" name="inst_center2" id="inst_center2" >
+                <option>센터명을 선택해 주세요</option>
+                </select>
+              </div>
+
+
+              </p><br>
+              <!-- Submit Button -->
+							<button class="btn btn-main-md">회원가입</button>
+						</form>
+						<div class="new-acount">
+							<p>By clicking “Sign Up” I agree to <a href="privacy-policy.html">Terms of Conditions.</a></p>
+							<p>Anready have an account? <a href="{% url 'signin' %}">SIGN IN</a></p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!--====  End of Sign Up  ====-->
+
+
+  <!-- To Top -->
+  <div class="scroll-top-to">
+    <i class="ti-angle-up"></i>
+  </div>
+  
+  <!-- JAVASCRIPTS -->
+  <script src="../static/plugins/jquery/jquery.min.js"></script>
+  <script src="../static/plugins/bootstrap/bootstrap.min.js"></script>
+  <script src="../static/plugins/slick/slick.min.js"></script>
+  <script src="../static/plugins/fancybox/jquery.fancybox.min.js"></script>
+  <script src="../static/plugins/syotimer/jquery.syotimer.min.js"></script>
+  <script src="../static/plugins/aos/aos.js"></script>
+  
+  <script>
+    const inst_dict = "{{dict|safe}}";
+    console.log(inst_dict);
+  </script>
+  <script src="../static/js/script.js"></script>
+  <script src="../static/js/signupscript.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,25 @@
+/*===============  signup & signin  ==============*/
+
+.box-radio-input input[type="radio"]{
+  display:none;
+}
+
+.box-radio-input input[type="radio"] + span{
+  display:inline-block;
+  background:none;
+  border:1px solid #dfdfdf;
+  border-radius: 5px;
+  padding:0px 20px;
+  text-align:center;
+  height:35px;
+  line-height:33px;
+  font-weight:500;
+  cursor:pointer;
+  margin: 10px 40px;
+}
+
+.box-radio-input input[type="radio"]:checked + span{
+  border:1px solid #2e7eed;
+  background:#2e7eed;
+  color:#fff;
+}

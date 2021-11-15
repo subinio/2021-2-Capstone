@@ -1,0 +1,72 @@
+
+<!DOCTYPE html>
+	<head>
+		<title>Chat</title>
+		
+    <link href="../static/css/chatstyle.css" rel="stylesheet">
+
+	</head>
+	<!--Coded With Love By Mutiullah Samim-->
+	<body onresize="parent.resizeTo(800,600)" onload="parent.resizeTo(800,600)">
+		<section class="msger">
+      <header class="msger-header">
+        <div class="msger-header-title">
+          <img src="../static/images/favicon.png" style = "width: 20px;">&nbsp; 코로나 격리자 심리 상태 모니터링 시스템
+        </div>
+        <div class="msger-header-options">
+          <span><i class="fas fa-cog"></i></span>
+        </div>
+      </header>
+    
+      <main class="msger-chat">
+        <div class="msg left-msg">
+          <div
+           class="msg-img"
+           style="background-image: url(../static/images/chatbot.png)"
+          ></div>
+    
+          <div class="msg-bubble">
+            <div class="msg-info">
+              <div class="msg-info-name">BOT</div>
+              <div class="msg-info-time">12:45</div>
+            </div>
+    
+            <div class="msg-text">
+              안녕하세요! 오늘 기분은 어떠세요? 😄
+            </div>
+          </div>
+        </div>
+    
+        <div class="msg right-msg">
+          <div
+           class="msg-img"
+           style="background-image: url(../static/images/maskperson.png)"
+          ></div>
+    
+          <div class="msg-bubble">
+            <div class="msg-info">
+              <div class="msg-info-name">{{user.first_name}}님</div>
+              <div class="msg-info-time">12:46</div>
+            </div>
+    
+            <div class="msg-text">
+              목이 너무 아파서 기분이 별로에요.
+            </div>
+          </div>
+        </div>
+      </main>
+
+      
+      <!-- <button id="record" style="width:50px; height: 50px; background-color: red;margin:0 auto; border-radius: 50px; border: 5px solid rosybrown"></button>
+      <a href="" style = "text-align: right;"> 음성을 사용할 수 없는 환경인가요?</a>
+       -->
+      <a href="" style = "text-align: right;"> 음성으로 채팅하시겠습니까?</a>
+      <form class="msger-inputarea">  
+        <input type="text" class="msger-input" placeholder="Enter your message...">
+        <button type="submit" class="msger-send-btn">Send</button>
+      </form>
+    </section>
+
+    <script src="../static/js/chatscript.js"></script>
+	</body>
+</html>
