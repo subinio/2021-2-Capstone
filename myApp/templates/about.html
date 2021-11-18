@@ -21,7 +21,7 @@ FACEBOOK: https://www.facebook.com/themefisher
   <!-- Basic Page Needs
   ================================================== -->
   <meta charset="utf-8">
-  <title>Small Apps | Bootstrap App Landing Template</title>
+  <title>코로나 격리자 심리 상태 모니터링 시스템</title>
 
   <!-- Mobile Specific Metas
   ================================================== -->
@@ -45,75 +45,60 @@ FACEBOOK: https://www.facebook.com/themefisher
   <!-- CUSTOM CSS -->
   <link href="../static/css/style.css" rel="stylesheet">
 
+  
+  <link href="http://fonts.googleapis.com/earlyaccess/jejugothic.css" rel="stylesheet">
+  <style>
+    .jg{font-family: 'Jeju Gothic', sans-serif;}
+    body{font-family: 'Jeju Gothic', sans-serif;}
+  </style>
+  
 </head>
 
 <body class="body-wrapper" data-spy="scroll" data-target=".privacy-nav">
 
-
 <nav class="navbar main-nav navbar-expand-lg px-2 px-sm-0 py-2 py-lg-0">
   <div class="container">
-    <a class="navbar-brand" href="index.html"><img src="../static/images/logo.png" alt="logo"></a>
+    <a class="navbar-brand" href="{% url 'index' %}" style="color:black !important;"><img src="../static/images/favicon.png" alt="logo">
+      &nbsp; 코로나 격리자 심리 상태 모니터링 시스템
+    </a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
       aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="ti-menu"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ml-auto">
-        <li class="nav-item dropdown @@home">
-          <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">Home
+
+        <li class="nav-item @@about">
+          <a class="nav-link" href="{% url 'about'%}">About</a>
+        </li>
+
+        {% if user.is_authenticated %}
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" style="color:#2e7eed">안녕하세요, {{user.first_name}}님! &nbsp;
             <span><i class="ti-angle-down"></i></span>
           </a>
+          
           <!-- Dropdown list -->
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item @@home1" href="index.html">Homepage</a></li>
-            <li><a class="dropdown-item" href="homepage-2.html">Homepage 2</a></li>
-            <li><a class="dropdown-item @@home3" href="homepage-3.html">Homepage 3</a></li>
-
-            <li class="dropdown dropdown-submenu dropright">
-              <a class="dropdown-item dropdown-toggle" href="#!" id="dropdown0301" role="button"
-                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Sub Menu</a>
-
-              <ul class="dropdown-menu" aria-labelledby="dropdown0301">
-                <li><a class="dropdown-item" href="index.html">Submenu 11</a></li>
-                <li><a class="dropdown-item" href="index.html">Submenu 12</a></li>
-              </ul>
+            <li><a class="dropdown-item active" href="index.html">Homepage</a></li>
+            <li><a class="dropdown-item" href="homepage-2.html">마이페이지</a></li>
+            <li><a class="dropdown-item" href="javascript:{document.getElementById('logout').submit()}">로그아웃</a>
+              <form id = "logout" method = "POST" action = "{% url 'logout' %}">
+                {% csrf_token %}
+                <input type = "hidden">
+              </form>
             </li>
           </ul>
         </li>
-        <li class="nav-item dropdown @@pages">
-          <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">Pages
-            <span><i class="ti-angle-down"></i></span>
-          </a>
-          <!-- Dropdown list -->
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item @@team" href="team.html">Team</a></li>
-            <li><a class="dropdown-item @@career" href="career.html">Career</a></li>
-            <li><a class="dropdown-item @@blog" href="blog.html">Blog</a></li>
-            <li><a class="dropdown-item @@blogSingle" href="blog-single.html">Blog Single</a></li>
-            <li><a class="dropdown-item @@privacy" href="privacy-policy.html">Privacy</a></li>
-            <li><a class="dropdown-item @@faq" href="FAQ.html">FAQ</a></li>
-            <li><a class="dropdown-item" href="sign-in.html">Sign In</a></li>
-            <li><a class="dropdown-item" href="sign-up.html">Sign Up</a></li>
-            <li><a class="dropdown-item" href="404.html">404</a></li>
-            <li><a class="dropdown-item" href="comming-soon.html">Coming Soon</a></li>
+        {% else %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'signin'%}">로그인</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'signup'%}">회원가입</a>
+        </li>
+        {% endif %}
 
-            <li class="dropdown dropdown-submenu dropleft">
-              <a class="dropdown-item dropdown-toggle" href="#!" id="dropdown0501" role="button"
-                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Sub Menu</a>
-
-              <ul class="dropdown-menu" aria-labelledby="dropdown0501">
-                <li><a class="dropdown-item" href="index.html">Submenu 21</a></li>
-                <li><a class="dropdown-item" href="index.html">Submenu 22</a></li>
-              </ul>
-            </li>
-          </ul>
-        </li>
-        <li class="nav-item active">
-          <a class="nav-link" href="about.html">About</a>
-        </li>
-        <li class="nav-item @@contact">
-          <a class="nav-link" href="contact.html">Contact</a>
-        </li>
       </ul>
     </div>
   </div>
@@ -463,79 +448,6 @@ FACEBOOK: https://www.facebook.com/themefisher
 =            Footer            =
 =============================-->
 <footer>
-  <div class="footer-main">
-    <div class="container">
-      <div class="row">
-        <div class="col-lg-4 col-md-12 m-md-auto align-self-center">
-          <div class="block">
-            <a href="index.html"><img src="../static/images/logo-alt.png" alt="footer-logo"></a>
-            <!-- Social Site Icons -->
-            <ul class="social-icon list-inline">
-              <li class="list-inline-item">
-                <a href="https://www.facebook.com/themefisher"><i class="ti-facebook"></i></a>
-              </li>
-              <li class="list-inline-item">
-                <a href="https://twitter.com/themefisher"><i class="ti-twitter"></i></a>
-              </li>
-              <li class="list-inline-item">
-                <a href="https://www.instagram.com/themefisher/"><i class="ti-instagram"></i></a>
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div class="col-lg-2 col-md-3 col-6 mt-5 mt-lg-0">
-          <div class="block-2">
-            <!-- heading -->
-            <h6>Product</h6>
-            <!-- links -->
-            <ul>
-              <li><a href="team.html">Teams</a></li>
-              <li><a href="blog.html">Blogs</a></li>
-              <li><a href="FAQ.html">FAQs</a></li>
-            </ul>
-          </div>
-        </div>
-        <div class="col-lg-2 col-md-3 col-6 mt-5 mt-lg-0">
-          <div class="block-2">
-            <!-- heading -->
-            <h6>Resources</h6>
-            <!-- links -->
-            <ul>
-              <li><a href="sign-up.html">Singup</a></li>
-              <li><a href="sign-in.html">Login</a></li>
-              <li><a href="blog.html">Blog</a></li>
-            </ul>
-          </div>
-        </div>
-        <div class="col-lg-2 col-md-3 col-6 mt-5 mt-lg-0">
-          <div class="block-2">
-            <!-- heading -->
-            <h6>Company</h6>
-            <!-- links -->
-            <ul>
-              <li><a href="career.html">Career</a></li>
-              <li><a href="contact.html">Contact</a></li>
-              <li><a href="team.html">Investor</a></li>
-              <li><a href="privacy.html">Terms</a></li>
-            </ul>
-          </div>
-        </div>
-        <div class="col-lg-2 col-md-3 col-6 mt-5 mt-lg-0">
-          <div class="block-2">
-            <!-- heading -->
-            <h6>Company</h6>
-            <!-- links -->
-            <ul>
-              <li><a href="about.html">About</a></li>
-              <li><a href="contact.html">Contact</a></li>
-              <li><a href="team.html">Team</a></li>
-              <li><a href="privacy-policy.html">Privacy Policy</a></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
   <div class="text-center bg-dark py-4">
     <small class="text-secondary">Copyright &copy; <script>document.write(new Date().getFullYear())</script>. Designed &amp; Developed by <a href="https://themefisher.com/">Themefisher</a></small class="text-secondary">
   </div>

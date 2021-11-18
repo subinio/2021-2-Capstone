@@ -130,3 +130,29 @@ def logout(request):
 def chat(request):
 
     return render(request, 'chat.html')
+
+
+
+
+#################################################
+#### for doctor management page
+#################################################
+
+def dashboard(request):
+    return render(request, 'dr-dashboard.html')
+
+
+def groupCalendar(request):
+    return render(request, 'dr-groupCalendar.html')
+
+
+def individualCalendar(request):
+    return render(request, 'dr-individualCalendar.html')
+
+
+def monitoringByPatient(request):
+    return render(request, 'dr-monitoringByPatient.html')
+
+
+def monitoringByTime(request):
+    return render(request, 'dr-monitoringByTime.html')

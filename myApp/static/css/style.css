@@ -16,17 +16,6 @@ FACEBOOK: https://www.facebook.com/themefisher
 
 
 /*=== MEDIA QUERY ===*/
-@import url("https://fonts.googleapis.com/css?family=Lora:400,400i|Open+Sans:300,400,600,700,800");
-body {
-  font-family: "Open Sans", sans-serif;
-  -webkit-font-smoothing: antialiased;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  font-family: "Open Sans", sans-serif;
-  color: #000;
-  font-weight: 300;
-}
 
 h1 {
   font-size: 45px;

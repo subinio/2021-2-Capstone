@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+
+  <!-- Basic Page Needs
+  ================================================== -->
+    <meta charset="utf-8">
+    <title>코로나 격리자 심리 상태 모니터링 시스템</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    
+    <!-- Favicon icon -->
+    <link rel="shortcut icon" type="image/x-icon" href="../static/images/favicon.png" />
+    <!-- Custom Stylesheet -->
+    <link href="../static/static-dr/plugins/fullcalendar/css/fullcalendar.min.css" rel="stylesheet">
+    <link href="../static/static-dr/css/style.css" rel="stylesheet">
+    
+
+    <link href="http://fonts.googleapis.com/earlyaccess/jejugothic.css" rel="stylesheet">
+    <style>
+      .jg{font-family: 'Jeju Gothic', sans-serif;}
+      body{font-family: 'Jeju Gothic', sans-serif;}
+    </style>
+</head>
+
+<body>
+
+    <!--*******************
+        Preloader start
+    ********************-->
+    <div id="preloader">
+        <div class="loader">
+            <svg class="circular" viewBox="25 25 50 50">
+                <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="3" stroke-miterlimit="10" />
+            </svg>
+        </div>
+    </div>
+    <!--*******************
+        Preloader end
+    ********************-->
+
+    
+    <!--**********************************
+        Main wrapper start
+    ***********************************-->
+    <div id="main-wrapper">
+
+      <div class="header">    
+          <div class="header-content clearfix">
+              <nav class="navbar main-nav navbar-expand-lg px-2 px-sm-0 py-2 py-lg-0">
+                <div class="container" style="max-width:100% !important; height:80px !important;">
+                  <a class="navbar-brand" href="{% url 'index' %}" style="color:black !important;"><img src="../static/images/favicon.png" alt="logo">
+                    &nbsp; 코로나 격리자 심리 상태 모니터링 시스템
+                  </a>
+                  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="ti-menu"></span>
+                  </button>
+                  <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ml-auto">
+              
+                      <li class="nav-item @@about">
+                        <a class="nav-link" href="{% url 'about'%}">About</a>
+                      </li>
+              
+                      {% if user.is_authenticated %}
+                      <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" style="color:#2e7eed">안녕하세요, {{user.first_name}}님! &nbsp;
+                          <span><i class="ti-angle-down"></i></span>
+                        </a>
+                        
+                        <!-- Dropdown list -->
+                        <ul class="dropdown-menu">
+                          <li><a class="dropdown-item active" href="index.html">Homepage</a></li>
+                          <li><a class="dropdown-item" href="homepage-2.html">마이페이지</a></li>
+                          <li><a class="dropdown-item" href="javascript:{document.getElementById('logout').submit()}">로그아웃</a>
+                            <form id = "logout" method = "POST" action = "{% url 'logout' %}">
+                              {% csrf_token %}
+                              <input type = "hidden">
+                            </form>
+                          </li>
+                        </ul>
+                      </li>
+                      {% else %}
+                      <li class="nav-item">
+                        <a class="nav-link" href="{% url 'signin'%}">로그인</a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" href="{% url 'signup'%}">회원가입</a>
+                      </li>
+                      {% endif %}
+              
+                    </ul>
+                  </div>
+                </div>
+              </nav>
+          </div>
+      </div>
+
+        <!--**********************************
+            Sidebar start
+        ***********************************-->
+        <div class="nk-sidebar">           
+            <div class="nk-nav-scroll">
+                <ul class="metismenu" id="menu">
+                    <li class="nav-label">의료진 김철수님 오늘도 화이팅!</li>
+                    <li>
+                        <a href="{% url 'dashboard'%}" aria-expanded="false">
+                          <i class="icon-grid menu-icon"></i><span class="nav-text">메인보드</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="has-arrow" href="javascript:void()" aria-expanded="false">
+                            <i class="icon-speedometer menu-icon"></i><span class="nav-text">환자 모니터링 시스템</span>
+                        </a>
+                        <ul aria-expanded="false">
+                            <li><a href="{% url 'monitoringByTime'%}">실시간 모니터링</a></li>
+                            <li><a href="{% url 'monitoringByPatient'%}">환자별 모니터링</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a class="has-arrow" href="javascript:void()" aria-expanded="false">
+                            <i class="icon-speedometer menu-icon"></i><span class="nav-text">의료진 시스템</span>
+                        </a>
+                        <ul aria-expanded="false">
+                            <li><a href="{% url 'individualCalendar'%}">개인 스케줄관리</a></li>
+                            <li><a href="{% url 'groupCalendar'%}">의료진별 스케줄관리</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <!--**********************************
+            Sidebar end
+        ***********************************-->
+
+        <!--**********************************
+            Content body start
+        ***********************************-->
+        <div class="content-body">
+            <!-- row -->
+
+
+            <div class="container-fluid" style="margin-top:6rem !important;">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="card-title">
+                                    <h4>Calendar</h4>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-4 mt-5">
+                                        <a href="#" data-toggle="modal" data-target="#add-category" class="btn btn-primary btn-block"><i class="ti-plus f-s-12 m-r-5"></i> Create New</a>
+                                        <div id="external-events" class="m-t-20">
+                                            <p>Drag and drop your event or click in the calendar</p>
+                                            <div class="external-event bg-danger text-white" data-class="bg-danger"><i class="fa fa-move"></i>긴급 환자 상담</div>
+                                            <div class="external-event bg-success text-white" data-class="bg-success"><i class="fa fa-move"></i>정기 상담</div>
+                                            <div class="external-event bg-warning text-white" data-class="bg-warning"><i class="fa fa-move"></i>환자 모니터링 보고서</div>
+                                            <div class="external-event bg-dark text-white" data-class="bg-dark"><i class="fa fa-move"></i>일반 격리소 회의</div>
+                                          </div>
+                                          <div style="position:absolute !important; bottom:0 !important; width:100% !important">
+                                            <h4 class="card-title px-4 mb-3">Todo</h4>
+                                            <div class="todo-list">
+                                                <div class="tdl-holder">
+                                                    <div class="tdl-content">
+                                                        <ul id="todo_list">
+                                                            <li><label><input type="checkbox"><i></i><span>김송 환자 상담</span><a href='#' class="ti-trash"></a></label></li>
+                                                            <li><label><input type="checkbox" checked><i></i><span>지역 회의</span><a href='#' class="ti-trash"></a></label></li>
+                                                            <li><label><input type="checkbox"><i></i><span>환자 전체 모니터링</span><a href='#' class="ti-trash"></a></label></li>
+                                                            <li><label><input type="checkbox" checked><i></i><span>김세종 환자 상담</span><a href='#' class="ti-trash"></a></label></li>
+                                                        </ul>
+                                                    </div>
+                                                    <div class="px-4">
+                                                        <input type="text" class="tdl-new form-control" placeholder="Write new item and hit 'Enter'...">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                          </div>
+                                    </div>
+                                    
+                                    <div class="col-md-8">
+                                        <div class="card-box m-b-50">
+                                            <div id="calendar"></div>
+                                        </div>
+                                    </div>
+
+                                    <!-- end col -->
+                                    <!-- BEGIN MODAL -->
+                                    <div class="modal fade none-border" id="event-modal">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h4 class="modal-title"><strong>Add New Event</strong></h4>
+                                                </div>
+                                                <div class="modal-body"></div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
+                                                    <button type="button" class="btn btn-success save-event waves-effect waves-light">Create event</button>
+                                                    <button type="button" class="btn btn-danger delete-event waves-effect waves-light" data-dismiss="modal">Delete</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Modal Add Category -->
+                                    <div class="modal fade none-border" id="add-category">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h4 class="modal-title"><strong>Add a category</strong></h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form>
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <label class="control-label">Category Name</label>
+                                                                <input class="form-control form-white" placeholder="Enter name" type="text" name="category-name">
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <label class="control-label">Choose Category Color</label>
+                                                                <select class="form-control form-white" data-placeholder="Choose a color..." name="category-color">
+                                                                    <option value="success">Success</option>
+                                                                    <option value="danger">Danger</option>
+                                                                    <option value="info">Info</option>
+                                                                    <option value="pink">Pink</option>
+                                                                    <option value="primary">Primary</option>
+                                                                    <option value="warning">Warning</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
+                                                    <button type="button" class="btn btn-danger waves-effect waves-light save-category" data-dismiss="modal">Save</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- END MODAL -->
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /# card -->
+                    </div>
+                    
+                    <!-- /# column -->
+                </div>
+            </div>
+            <!-- #/ container -->
+        </div>
+        <!--**********************************
+            Content body end
+        ***********************************-->
+        
+        
+        <!--**********************************
+            Footer start
+        ***********************************-->
+        <div class="footer">
+            <div class="copyright">
+                <p>Copyright &copy; Designed & Developed by <a href="https://themeforest.net/user/quixlab">Quixlab</a> 2018</p>
+            </div>
+        </div>
+        <!--**********************************
+            Footer end
+        ***********************************-->
+    </div>
+    <!--**********************************
+        Main wrapper end
+    ***********************************-->
+
+    <!--**********************************
+        Scripts
+    ***********************************-->
+    <script src="../static/static-dr/plugins/common/common.min.js"></script>
+    <script src="../static/static-dr/js/custom.min.js"></script>
+    <script src="../static/static-dr/js/settings.js"></script>
+    <script src="../static/static-dr/js/gleek.js"></script>
+    <script src="../static/static-dr/js/styleSwitcher.js"></script>
+
+    
+    <script src="../static/static-dr/plugins/jqueryui/js/jquery-ui.min.js"></script>
+    <script src="../static/static-dr/plugins/moment/moment.min.js"></script>
+    <script src="../static/static-dr/plugins/fullcalendar/js/fullcalendar.min.js"></script>
+    <script src="../static/static-dr/js/plugins-init/fullcalendar-init.js"></script>
+
+</body>
+
+</html>

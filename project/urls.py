@@ -25,4 +25,12 @@ urlpatterns = [
     path('signup/', myApp.views.signup, name='signup'),
     path('logout/', myApp.views.logout, name='logout'),
     path('chat/', myApp.views.chat, name='chat'),
+
+
+    path('dashboard/', myApp.views.dashboard, name='dashboard'),
+    path('groupCalendar/', myApp.views.groupCalendar, name='groupCalendar'),
+    path('individualCalendar/', myApp.views.individualCalendar, name='individualCalendar'),
+    path('monitoringByPatient/', myApp.views.monitoringByPatient, name='monitoringByPatient'),
+    path('monitoringByTime/', myApp.views.monitoringByTime, name='monitoringByTime'),
+
 ]

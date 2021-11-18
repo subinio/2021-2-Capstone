@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+
+  <!-- Basic Page Needs
+  ================================================== -->
+    <meta charset="utf-8">
+    <title>코로나 격리자 심리 상태 모니터링 시스템</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    
+    <!-- Favicon icon -->
+    <link rel="shortcut icon" type="image/x-icon" href="../static/images/favicon.png" />
+    <!-- Custom Stylesheet -->
+    <link href="../static/static-dr/css/style.css" rel="stylesheet">
+    <link href="../static/static-dr/css/chat.css" rel="stylesheet">
+
+    <link href="http://fonts.googleapis.com/earlyaccess/jejugothic.css" rel="stylesheet">
+    <style>
+      .jg{font-family: 'Jeju Gothic', sans-serif;}
+      body{font-family: 'Jeju Gothic', sans-serif;}
+    </style>
+</head>
+
+<body>
+
+    <!--*******************
+        Preloader start
+    ********************-->
+    <div id="preloader">
+        <div class="loader">
+            <svg class="circular" viewBox="25 25 50 50">
+                <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="3" stroke-miterlimit="10" />
+            </svg>
+        </div>
+    </div>
+    <!--*******************
+        Preloader end
+    ********************-->
+
+    
+    <!--**********************************
+        Main wrapper start
+    ***********************************-->
+    <div id="main-wrapper">
+
+      <div class="header">    
+          <div class="header-content clearfix">
+              <nav class="navbar main-nav navbar-expand-lg px-2 px-sm-0 py-2 py-lg-0">
+                <div class="container" style="max-width:100% !important; height:80px !important;">
+                  <a class="navbar-brand" href="{% url 'index' %}" style="color:black !important;"><img src="../static/images/favicon.png" alt="logo">
+                    &nbsp; 코로나 격리자 심리 상태 모니터링 시스템
+                  </a>
+                  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="ti-menu"></span>
+                  </button>
+                  <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ml-auto">
+              
+                      <li class="nav-item @@about">
+                        <a class="nav-link" href="{% url 'about'%}">About</a>
+                      </li>
+              
+                      {% if user.is_authenticated %}
+                      <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" style="color:#2e7eed">안녕하세요, {{user.first_name}}님! &nbsp;
+                          <span><i class="ti-angle-down"></i></span>
+                        </a>
+                        
+                        <!-- Dropdown list -->
+                        <ul class="dropdown-menu">
+                          <li><a class="dropdown-item active" href="index.html">Homepage</a></li>
+                          <li><a class="dropdown-item" href="homepage-2.html">마이페이지</a></li>
+                          <li><a class="dropdown-item" href="javascript:{document.getElementById('logout').submit()}">로그아웃</a>
+                            <form id = "logout" method = "POST" action = "{% url 'logout' %}">
+                              {% csrf_token %}
+                              <input type = "hidden">
+                            </form>
+                          </li>
+                        </ul>
+                      </li>
+                      {% else %}
+                      <li class="nav-item">
+                        <a class="nav-link" href="{% url 'signin'%}">로그인</a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" href="{% url 'signup'%}">회원가입</a>
+                      </li>
+                      {% endif %}
+              
+                    </ul>
+                  </div>
+                </div>
+              </nav>
+          </div>
+      </div>
+
+
+        <!--**********************************
+            Sidebar start
+        ***********************************-->
+        <div class="nk-sidebar">           
+            <div class="nk-nav-scroll">
+                <ul class="metismenu" id="menu">
+                    <li class="nav-label">의료진 김철수님 오늘도 화이팅!</li>
+                    <li>
+                        <a href="{% url 'dashboard'%}" aria-expanded="false">
+                          <i class="icon-grid menu-icon"></i><span class="nav-text">메인보드</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="has-arrow" href="javascript:void()" aria-expanded="false">
+                            <i class="icon-speedometer menu-icon"></i><span class="nav-text">환자 모니터링 시스템</span>
+                        </a>
+                        <ul aria-expanded="false">
+                            <li><a href="{% url 'monitoringByTime'%}">실시간 모니터링</a></li>
+                            <li><a href="{% url 'monitoringByPatient'%}">환자별 모니터링</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a class="has-arrow" href="javascript:void()" aria-expanded="false">
+                            <i class="icon-speedometer menu-icon"></i><span class="nav-text">의료진 시스템</span>
+                        </a>
+                        <ul aria-expanded="false">
+                            <li><a href="{% url 'individualCalendar'%}">개인 스케줄관리</a></li>
+                            <li><a href="{% url 'groupCalendar'%}">의료진별 스케줄관리</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <!--**********************************
+            Sidebar end
+        ***********************************-->
+
+        <!--**********************************
+            Content body start
+        ***********************************-->
+        <div class="content-body">
+            <!-- row -->
+
+            <div class="container-fluid" style="margin-top:6rem !important;">
+
+
+              <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <form action="#" method="post">
+                          <div>
+                              <input type="search" class="form-control input-default" placeholder="회원번호를 입력하세요" style="width:60%; height:60px; font-size:25px; float:left">
+                              <button type="submit" class="btn btn-primary" style="clear:both; margin-left:20px; height:60px; font-size:25px"><i class="mdi mdi-magnify"></i></button>
+                            </div>
+                        </form>
+                    </div>
+                  </div>
+              </div>
+
+
+              <div class="col-md-12" style="margin:0px 10px;">
+                <h1>김영희님의 심리 상태 분석 자료입니다</h1>
+                <br>
+                <div class="custom-tab-1">
+                  <ul class="nav nav-tabs mb-3" id="myTabs" style="font-size:15px; border-width:5px;">
+                      <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#total">전체</a>
+                      </li>
+                      <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#here1">2021년 11월 29일</a>
+                      </li>
+                      <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#here2">2021년 11월 17일</a>
+                      </li>
+                      <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#here3">2021년 11월 05일</a>
+                      </li>
+                      <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#here4">2021년 10월 30일</a>
+                      </li>
+                  </ul>
+                  <div class="tab-content">
+                      <div class="tab-pane show active" id="total">
+                          <div class="p-t-15">
+                              <h4>김영희 환자의 종합적인 감정상태는 "중립"입니다.</h4>
+                              <p>빠르고 쉬운 모니터링을 위해 모든 감정을 분석하고 분류하여 긍정/부정/중립으로 환자의 상태를 나타내고 있습니다.<br>환자별 페이지를 참조하면 모든 감정상태와 대화상황을 모두 직접 확인할 수 있습니다.</p>
+                              <div class="row">
+                                  <div class="col-lg-6">
+                                      <div class="card">
+                                          <div class="card-body">
+                                              <h4 class="card-title">종합 감정 상태의 비율 (긍정 / 중립 / 부정)</h4>
+                                              <div id="flotPie1" class="flot-chart"></div>
+                                          </div>
+                                      </div>
+                                  </div>
+                                  <div class="col-lg-6">
+                                      <div class="card">
+                                          <div class="card-body">
+                                              <h4 class="card-title">검사 횟수 별 비율 증감 그래프</h4>
+                                              <div id="flotLine1" class="flot-chart"></div>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>
+                              <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <h4 class="card-title">종합 음성 감정 비율 (행복 / 중립 / 분노 / 슬픔)</h4>
+                                                <div id="flotPie2" class="flot-chart"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <h4 class="card-title">종합 텍스트 감정 비율 (행복 / 중립 / 불안 / 분노 / 슬픔)</h4>
+                                                <div id="flotPie3" class="flot-chart"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                              </div>
+                           </div>
+                      </div>
+
+                      
+                      <div class="tab-pane fade" id="here1">
+                          <div class="p-t-15">
+                              <h4>2021년 11월 29일의 환자 심리 상태는 "긍정"입니다.</h4>
+                              <p>위의 검색창에 결과를 원하는 환자 번호를 입력하면 해당 환자의 모든 감정상태와 대화상황을 모두 직접 확인할 수 있습니다.</p>
+
+                              <div class="row">
+                                <div class="col-lg-6">
+                                  
+                                      <div class="card">
+                                          <div class="card-body">
+                                              <h4 class="card-title">2021년 11월 29일의 감정 상태의 비율 (긍정 / 중립 / 부정)</h4>
+                                              <div id="flotPie1-1" class="flot-chart"></div>
+                                          </div>
+                                      </div>
+                                  
+                                      <div class="card">
+                                          <div class="card-body">
+                                              <h4 class="card-title">2021년 11월 29일의 음성 감정 비율 (행복 / 중립 / 분노 / 슬픔)</h4>
+                                              <div id="flotPie2-1" class="flot-chart"></div>
+                                          </div>
+                                      </div>
+                                  
+                                      <div class="card">
+                                          <div class="card-body">
+                                              <h4 class="card-title">2021년 11월 29일의 텍스트 감정 비율 (행복 / 중립 / 불안 / 분노 / 슬픔)</h4>
+                                              <div id="flotPie3-1" class="flot-chart"></div>
+                                          </div>
+                                      </div>
+                                  
+                                </div>
+
+                                <div class="col-lg-6">
+                                    <div class="card">
+                                        <div class="card-body">
+                                          <section class="msger" style="width: 100%; height:1270px;">
+                                            <header class="msger-header">
+                                              <div class="msger-header-title">
+                                                <i class="fas fa-comment-alt"></i> 2021년 11월 29일의 대화
+                                              </div>
+                                              <div class="msger-header-options">
+                                                <span><i class="fas fa-cog"></i></span>
+                                              </div>
+                                            </header>
+                                          
+                                            <main class="msger-chat">
+                                              <div class="msg left-msg">
+                                                <div class="msg-bubble">
+                                                  <div class="msg-info">
+                                                    <div class="msg-info-name">BOT</div>
+                                                    <div class="msg-info-time">12:45</div>
+                                                  </div>
+                                          
+                                                  <div class="msg-text">
+                                                    Hi, welcome to SimpleChat! Go ahead and send me a message. 😄
+                                                  </div>
+                                                </div>
+                                              </div>
+                                          
+                                              <div class="msg right-msg">
+                                                <div class="msg-bubble">
+                                                  <div class="msg-info">
+                                                    <div class="msg-info-name">Sajad</div>
+                                                    <div class="msg-info-time">12:46</div>
+                                                  </div>
+                                          
+                                                  <div class="msg-text">
+                                                    You can change your name in JS section!
+                                                  </div>
+                                                </div>
+                                              </div>
+                                              <div class="msg left-msg">
+                                                <div class="msg-bubble">
+                                                  <div class="msg-info">
+                                                    <div class="msg-info-name">BOT</div>
+                                                    <div class="msg-info-time">12:45</div>
+                                                  </div>
+                                          
+                                                  <div class="msg-text">
+                                                    Hi, welcome to SimpleChat! Go ahead and send me a message. 😄
+                                                  </div>
+                                                </div>
+                                              </div>
+                                          
+                                              <div class="msg right-msg">
+                                                <div class="msg-bubble">
+                                                  <div class="msg-info">
+                                                    <div class="msg-info-name">Sajad</div>
+                                                    <div class="msg-info-time">12:46</div>
+                                                  </div>
+                                          
+                                                  <div class="msg-text">
+                                                    You can change your name in JS section!
+                                                  </div>
+                                                </div>
+                                              </div>
+                                              <div class="msg left-msg">
+                                                <div class="msg-bubble">
+                                                  <div class="msg-info">
+                                                    <div class="msg-info-name">BOT</div>
+                                                    <div class="msg-info-time">12:45</div>
+                                                  </div>
+                                          
+                                                  <div class="msg-text">
+                                                    Hi, welcome to SimpleChat! Go ahead and send me a message. 😄
+                                                  </div>
+                                                </div>
+                                              </div>
+                                          
+                                              <div class="msg right-msg">
+                                                <div class="msg-bubble">
+                                                  <div class="msg-info">
+                                                    <div class="msg-info-name">Sajad</div>
+                                                    <div class="msg-info-time">12:46</div>
+                                                  </div>
+                                          
+                                                  <div class="msg-text">
+                                                    You can change your name in JS section!
+                                                  </div>
+                                                </div>
+                                              </div>
+                                              <div class="msg left-msg">
+                                                <div class="msg-bubble">
+                                                  <div class="msg-info">
+                                                    <div class="msg-info-name">BOT</div>
+                                                    <div class="msg-info-time">12:45</div>
+                                                  </div>
+                                          
+                                                  <div class="msg-text">
+                                                    Hi, welcome to SimpleChat! Go ahead and send me a message. 😄
+                                                  </div>
+                                                </div>
+                                              </div>
+                                          
+                                              <div class="msg right-msg">
+                                                <div class="msg-bubble">
+                                                  <div class="msg-info">
+                                                    <div class="msg-info-name">Sajad</div>
+                                                    <div class="msg-info-time">12:46</div>
+                                                  </div>
+                                          
+                                                  <div class="msg-text">
+                                                    You can change your name in JS section!
+                                                  </div>
+                                                </div>
+                                              </div>
+                                              <div class="msg left-msg">
+                                                <div class="msg-bubble">
+                                                  <div class="msg-info">
+                                                    <div class="msg-info-name">BOT</div>
+                                                    <div class="msg-info-time">12:45</div>
+                                                  </div>
+                                          
+                                                  <div class="msg-text">
+                                                    Hi, welcome to SimpleChat! Go ahead and send me a message. 😄
+                                                  </div>
+                                                </div>
+                                              </div>
+                                          
+                                              <div class="msg right-msg">
+                                                <div class="msg-bubble">
+                                                  <div class="msg-info">
+                                                    <div class="msg-info-name">Sajad</div>
+                                                    <div class="msg-info-time">12:46</div>
+                                                  </div>
+                                          
+                                                  <div class="msg-text">
+                                                    You can change your name in JS section!
+                                                  </div>
+                                                </div>
+                                              </div>
+                                              <div class="msg left-msg">
+                                                <div class="msg-bubble">
+                                                  <div class="msg-info">
+                                                    <div class="msg-info-name">BOT</div>
+                                                    <div class="msg-info-time">12:45</div>
+                                                  </div>
+                                          
+                                                  <div class="msg-text">
+                                                    Hi, welcome to SimpleChat! Go ahead and send me a message. 😄
+                                                  </div>
+                                                </div>
+                                              </div>
+                                          
+                                              <div class="msg right-msg">
+                                                <div class="msg-bubble">
+                                                  <div class="msg-info">
+                                                    <div class="msg-info-name">Sajad</div>
+                                                    <div class="msg-info-time">12:46</div>
+                                                  </div>
+                                          
+                                                  <div class="msg-text">
+                                                    You can change your name in JS section!
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </main>
+                                          
+                                            
+                                          </section>
+                                        </div>
+                                    </div>
+                                </div>
+                              
+                              </div>
+                          </div>
+                      </div>
+
+
+                      <div class="tab-pane fade" id="here2">
+                          <div class="p-t-15">
+                              <h4>This is contact title</h4>
+                              <p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. Separated they live in Bookmarksgrove.</p>
+                              <p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. Separated they live in Bookmarksgrove.</p>
+                          </div>
+                      </div>
+                      <div class="tab-pane fade" id="here3">
+                          <div class="p-t-15">
+                              <h4>This is message title</h4>
+                              <p>Raw denim you probably haven't heard of them jean shorts Austin. Nesciunt tofu stumptown aliqua, retro synth master cleanse. Mustache cliche tempor.</p>
+                              <p>Raw denim you probably haven't heard of them jean shorts Austin. Nesciunt tofu stumptown aliqua, retro synth master cleanse. Mustache cliche tempor.</p>
+                          </div>
+                      </div>
+                      <div class="tab-pane fade" id="here4">
+                          <div class="p-t-15">
+                              <h4>sss</h4>
+                              <p>Raw denim you probably haven't heard of them jean shorts Austin. Nesciunt tofu stumptown aliqua, retro synth master cleanse. Mustache cliche tempor.</p>
+                              <p>Raw denim you probably haven't heard of them jean shorts Austin. Nesciunt tofu stumptown aliqua, retro synth master cleanse. Mustache cliche tempor.</p>
+                          </div>
+                      </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+            <!-- #/ container -->
+        </div>
+        <!--**********************************
+            Content body end
+        ***********************************-->
+        
+    </div>
+    <!--**********************************
+        Main wrapper end
+    ***********************************-->
+
+    <!--**********************************
+        Scripts
+    ***********************************-->
+    <script src="../static/static-dr/plugins/common/common.min.js"></script>
+    <script src="../static/static-dr/js/custom.min.js"></script>
+    <script src="../static/static-dr/js/settings.js"></script>
+    <script src="../static/static-dr/js/gleek.js"></script>
+    <script src="../static/static-dr/js/styleSwitcher.js"></script>
+
+    <script src="../static/static-dr/plugins/flot/js/jquery.flot.min.js"></script>
+    <script src="../static/static-dr/plugins/flot/js/jquery.flot.pie.js"></script>
+    <script src="../static/static-dr/plugins/flot/js/jquery.flot.resize.js"></script>
+    <script src="../static/static-dr/plugins/flot/js/jquery.flot.spline.js"></script>
+    <script src="../static/static-dr/plugins/flot/js/jquery.flot.init.js"></script>
+    
+    <script>
+    
+
+
+    $('#myTabs a').click(function(e) {
+      e.preventDefault();
+      $(this).tab('show');
+    });
+    
+    // store the currently selected tab in the hash value
+    $("ul.nav-tabs > li > a").on("shown.bs.tab", function(e) {
+      var id = $(e.target).attr("href").substr(1);
+      window.location.hash = id;
+    });
+    
+    // on load of the page: switch to the currently selected tab
+    var hash = window.location.hash;
+    $('#myTabs a[href="' + hash + '"]').tab('show');
+
+    $("ul.nav-tabs > li > a").on("shown.bs.tab", function(e) {
+      location.reload();
+    });
+
+
+    $(function(){
+      var piedata1 = [{
+            label: "긍정",
+            data: [
+                [1, 50]
+            ],
+            color: '#6fd96f'
+        },
+        {
+            label: "부정",
+            data: [
+                [1, 40]
+            ],
+            color: '#ff5e5e'
+        },
+        {
+            label: "중립",
+            data: [
+                [1, 70]
+            ],
+            color: '#f29d56'
+        }
+    ];
+
+    var piedata2 = [{
+          label: "행복",
+          data: [
+              [1, 50]
+          ],
+          color: '#9097c4'
+      },
+      {
+          label: "중립",
+          data: [
+              [1, 90]
+          ],
+          color: '#7571F9'
+      },
+      {
+          label: "분노",
+          data: [
+              [1, 50]
+          ],
+          color: '#ff5e5e'
+      },
+      {
+          label: "슬픔",
+          data: [
+              [1, 70]
+          ],
+          color: '#e62739'
+      }
+    ];
+
+    
+    var piedata3 = [{
+          label: "행복",
+          data: [
+              [1, 50]
+          ],
+          color: '#9097c4'
+      },
+      {
+          label: "중립",
+          data: [
+              [1, 90]
+          ],
+          color: '#7571F9'
+      },
+      {
+          label: "불안",
+          data: [
+              [1, 50]
+          ],
+          color: '#ff5e5e'
+      },
+      {
+          label: "분노",
+          data: [
+              [1, 70]
+          ],
+          color: '#e62739'
+      },
+      {
+          label: "슬픔",
+          data: [
+              [1, 30]
+          ],
+          color: '#f29d56'
+      }
+    ];
+
+    $.plot('#flotPie1-1', piedata1, {
+        series: {
+            pie: {
+                show: true,
+                radius: 1,
+                label: {
+                    show: true,
+                    radius: 2 / 3,
+                    formatter: labelFormatter,
+                    threshold: 0.1
+                }
+            }
+        },
+        grid: {
+            hoverable: true,
+            clickable: true
+        }
+    });
+
+    $.plot('#flotPie2-1', piedata2, {
+        series: {
+            pie: {
+                show: true,
+                radius: 1,
+                innerRadius: 0.5,
+                label: {
+                    show: true,
+                    radius: 2 / 3,
+                    formatter: labelFormatter,
+                    threshold: 0.1
+                }
+            }
+        },
+        grid: {
+            hoverable: true,
+            clickable: true
+        }
+    });
+
+    $.plot('#flotPie3-1', piedata3, {
+        series: {
+            pie: {
+                show: true,
+                radius: 1,
+                innerRadius: 0.5,
+                label: {
+                    show: true,
+                    radius: 2 / 3,
+                    formatter: labelFormatter,
+                    threshold: 0.1
+                }
+            }
+        },
+        grid: {
+            hoverable: true,
+            clickable: true
+        }
+    });
+    function labelFormatter(label, series) {
+        return "<div style='font-size:8pt; text-align:center; padding:2px; color:white;'>" + label + "<br/>" + Math.round(series.percent) + "%</div>";
+    }
+
+    });
+
+    </script>
+
+</body>
+
+</html>

@@ -35,18 +35,16 @@ var autoHypenPhone = function(str){
 var phoneNum = document.getElementById('phoneNum');
 
 phoneNum.onkeyup = function(){
-console.log(this.value);
+console.log(this.value); 
 this.value = autoHypenPhone( this.value ) ;  
 }
-
 
 
 /*=========================================
 ===== 의료진, 격리자 선택
 =====================================*/
 
-$("input:radio[name=who]").click(function(){
-            
+$("input:radio[name=who]").click(function(){      
   if($("input:radio[name=who]:checked").val()=='doctor'){
       $("#forPatient").css({'display': 'none'})  
       $("#forDoctor").css({'display': ''})       //show
@@ -62,3 +60,60 @@ $("input:radio[name=who]").click(function(){
       });
   }
 });
+
+
+
+/*=========================================
+===== 기관 선택
+=====================================*/
+
+function cityCategory() {
+  var js_dict = inst_dict.replace(/\'/gi, "\"");
+  js_dict = JSON.parse(js_dict);
+
+  if(document.querySelector('input[name="who"]:checked').value == "patient"){
+    var target = document.getElementById("inst_city1");
+  }
+  else{
+    var target = document.getElementById("inst_city2");
+  }
+
+  // target.options.length = 1;
+
+  var cities = Object.keys(js_dict)
+  for (i in cities) {
+		var opt = document.createElement("option");
+		opt.value = cities[i];
+		opt.innerHTML = cities[i];
+		target.appendChild(opt);
+	}	
+  
+}
+
+
+function centerCategory(e) {
+  var js_dict = inst_dict.replace(/\'/gi, "\"");
+  js_dict = JSON.parse(js_dict);
+
+  if(document.querySelector('input[name="who"]:checked').value == "patient"){
+    var target = document.getElementById("inst_center1");
+  }
+  else{
+    var target = document.getElementById("inst_center2");
+  }
+
+  target.options.length = 1;
+  
+  var centers = js_dict[e.value];
+
+  console.log(centers);
+
+	for (i in centers) {
+		var opt = document.createElement("option");
+		opt.value = centers[i];
+		opt.innerHTML = centers[i];
+		target.appendChild(opt);
+	}	
+}
+
+

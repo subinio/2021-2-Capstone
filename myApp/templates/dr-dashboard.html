@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+
+  <!-- Basic Page Needs
+  ================================================== -->
+    <meta charset="utf-8">
+    <title>코로나 격리자 심리 상태 모니터링 시스템</title>
+  
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <!-- Favicon icon -->
+    <link rel="shortcut icon" type="image/x-icon" href="../static/images/favicon.png" />
+    <!-- Pignose Calender -->
+    <link href="../static/static-dr/plugins/pg-calendar/css/pignose.calendar.min.css" rel="stylesheet">
+    <!-- Chartist -->
+    <link rel="stylesheet" href="../static/static-dr/plugins/chartist/css/chartist.min.css">
+    <link rel="stylesheet" href="../static/static-dr/plugins/chartist-plugin-tooltips/css/chartist-plugin-tooltip.css">
+    <!-- Custom Stylesheet -->
+    <link href="../static/static-dr/css/style.css" rel="stylesheet">
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" rel="stylesheet">
+
+    
+    <link href="http://fonts.googleapis.com/earlyaccess/jejugothic.css" rel="stylesheet">
+    <style>
+      .jg{font-family: 'Jeju Gothic', sans-serif;}
+      body{font-family: 'Jeju Gothic', sans-serif;}
+    </style>
+  </head>
+
+
+
+<body>
+
+    <!--*******************
+        Preloader start
+    ********************-->
+    <div id="preloader">
+        <div class="loader">
+            <svg class="circular" viewBox="25 25 50 50">
+                <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="3" stroke-miterlimit="10" />
+            </svg>
+        </div>
+    </div>
+    <!--*******************
+        Preloader end
+    ********************-->
+
+    
+    <!--**********************************
+        Main wrapper start
+    ***********************************-->
+    <div id="main-wrapper">
+      
+      <div class="header">    
+          <div class="header-content clearfix">
+              <nav class="navbar main-nav navbar-expand-lg px-2 px-sm-0 py-2 py-lg-0">
+                <div class="container" style="max-width:100% !important; height:80px !important;">
+                  <a class="navbar-brand" href="{% url 'index' %}" style="color:black !important;"><img src="../static/images/favicon.png" alt="logo">
+                    &nbsp; 코로나 격리자 심리 상태 모니터링 시스템
+                  </a>
+                  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="ti-menu"></span>
+                  </button>
+                  <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ml-auto">
+              
+                      <li class="nav-item @@about">
+                        <a class="nav-link" href="{% url 'about'%}">About</a>
+                      </li>
+              
+                      {% if user.is_authenticated %}
+                      <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" style="color:#2e7eed">안녕하세요, {{user.first_name}}님! &nbsp;
+                          <span><i class="ti-angle-down"></i></span>
+                        </a>
+                        
+                        <!-- Dropdown list -->
+                        <ul class="dropdown-menu">
+                          <li><a class="dropdown-item active" href="index.html">Homepage</a></li>
+                          <li><a class="dropdown-item" href="homepage-2.html">마이페이지</a></li>
+                          <li><a class="dropdown-item" href="javascript:{document.getElementById('logout').submit()}">로그아웃</a>
+                            <form id = "logout" method = "POST" action = "{% url 'logout' %}">
+                              {% csrf_token %}
+                              <input type = "hidden">
+                            </form>
+                          </li>
+                        </ul>
+                      </li>
+                      {% else %}
+                      <li class="nav-item">
+                        <a class="nav-link" href="{% url 'signin'%}">로그인</a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" href="{% url 'signup'%}">회원가입</a>
+                      </li>
+                      {% endif %}
+              
+                    </ul>
+                  </div>
+                </div>
+              </nav>
+          </div>
+      </div>
+
+
+        <!--**********************************
+            Sidebar start
+        ***********************************-->
+        <div class="nk-sidebar">           
+            <div class="nk-nav-scroll">
+                <ul class="metismenu" id="menu">
+                    <li class="nav-label">의료진 김철수님 오늘도 화이팅!</li>
+                    <li>
+                        <a href="{% url 'dashboard'%}" aria-expanded="false">
+                          <i class="icon-grid menu-icon"></i><span class="nav-text">메인보드</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="has-arrow" href="javascript:void()" aria-expanded="false">
+                            <i class="icon-speedometer menu-icon"></i><span class="nav-text">환자 모니터링 시스템</span>
+                        </a>
+                        <ul aria-expanded="false">
+                            <li><a href="{% url 'monitoringByTime'%}">실시간 모니터링</a></li>
+                            <li><a href="{% url 'monitoringByPatient'%}">환자별 모니터링</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a class="has-arrow" href="javascript:void()" aria-expanded="false">
+                            <i class="icon-speedometer menu-icon"></i><span class="nav-text">의료진 시스템</span>
+                        </a>
+                        <ul aria-expanded="false">
+                            <li><a href="{% url 'individualCalendar'%}">개인 스케줄관리</a></li>
+                            <li><a href="{% url 'groupCalendar'%}">의료진별 스케줄관리</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <!--**********************************
+            Sidebar end
+        ***********************************-->
+
+        <!--**********************************
+            Content body start
+        ***********************************-->
+        <div class="content-body">
+
+            <div class="container-fluid mt-3" style="margin-top:6rem !important;">
+                <div class="row">
+                    <div class="col-lg-3 col-sm-6">
+                        <div class="card gradient-1">
+                            <div class="card-body">
+                                <h3 class="card-title text-white">총 격리 환자 수</h3>
+                                <div class="d-inline-block">
+                                    <h1 class="text-white">255 명</h1>
+                                    <p class="text-white mb-0">2021년 12월 03일 기준</p>
+                                </div>
+                                <span class="float-right display-5 opacity-5"><i class="fa fa-users"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-sm-6">
+                        <div class="card gradient-2">
+                            <div class="card-body">
+                                <h3 class="card-title text-white">긴급 환자 수</h3>
+                                <div class="d-inline-block">
+                                    <h2 class="text-white">6 명</h2>
+                                    <p class="text-white mb-0">2021년 12월 03일 기준</p>
+                                </div>
+                                <span class="float-right display-5 opacity-5"><i class="fas fa-user-md"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-sm-6">
+                        <div class="card gradient-3">
+                            <div class="card-body">
+                                <h3 class="card-title text-white">신규 환자 수</h3>
+                                <div class="d-inline-block">
+                                    <h2 class="text-white">▲ 56 명</h2>
+                                    <p class="text-white mb-0">2021년 12월 03일 기준</p>
+                                </div>
+                                <span class="float-right display-5 opacity-5"><i class="fas fa-head-side-cough"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-sm-6">
+                        <div class="card gradient-4">
+                            <div class="card-body">
+                                <h3 class="card-title text-white">퇴소 환자 수</h3>
+                                <div class="d-inline-block">
+                                    <h2 class="text-white">▼ 10 명</h2>
+                                    <p class="text-white mb-0">2021년 12월 03일 기준</p>
+                                </div>
+                                <span class="float-right display-5 opacity-5"><i class="fas fa-shield-virus"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-lg-12">
+                      <div class="card">
+                          <div class="card-body">
+                            <h4 class="mb-1">실시간 모니터링</h4>
+                              <div class="active-member">
+                                  <div class="table-responsive" style="width:100%; height:400px;  overflow:auto !important">
+                                      <table class="table table-xs mb-0">
+                                          <thead>
+                                              <tr>
+                                                  <th>회원번호</th>
+                                                  <th>이름</th>
+                                                  <th>격리기관</th>
+                                                  <th>상태</th>
+                                                  <th>긴급도</th>
+                                                  <th>최근 검사(채팅)</th>
+                                              </tr>
+                                          </thead>
+                                          <tbody>
+                                              <tr>
+                                                  <td>PT-0000000001</td>
+                                                  <td>김철수</td>
+                                                  <td>서울 노원 태릉선수촌</td>
+                                                  <td>
+                                                      <div>
+                                                          <div class="progress" style="height: 6px">
+                                                              <div class="progress-bar bg-danger" style="width: 50%"></div>
+                                                          </div>
+                                                      </div>
+                                                  </td>
+                                                  <td>긴급 <i class="fas fa-check text-danger  mr-2"></i></td>
+                                                  <td>
+                                                      <span>10분 전</span>
+                                                      <span class="m-0 pl-3">2021.12.03</span>
+                                                  </td>
+                                              </tr>
+                                              <tr>
+                                                  <td>PT-0000000029</td>
+                                                  <td>진수빈</td>
+                                                  <td>서울 노원 태릉선수촌</td>
+                                                  <td>
+                                                      <div>
+                                                          <div class="progress" style="height: 6px">
+                                                              <div class="progress-bar bg-success" style="width: 50%"></div>
+                                                          </div>
+                                                      </div>
+                                                  </td>
+                                                  <td>정상 <i class="fas fa-check text-success  mr-2"></i></td>
+                                                  <td>
+                                                    <span>21분 전</span>
+                                                    <span class="m-0 pl-3">2021.12.03</span>
+                                                  </td>
+                                              </tr>
+                                              <tr>
+                                                <td>PT-0000000083</td>
+                                                <td>이지연</td>
+                                                <td>서울 노원 태릉선수촌</td>
+                                                  <td>
+                                                      <div>
+                                                          <div class="progress" style="height: 6px">
+                                                              <div class="progress-bar bg-warning" style="width: 50%"></div>
+                                                          </div>
+                                                      </div>
+                                                  </td>
+                                                  <td>주의 <i class="fas fa-check text-warning  mr-2"></i></td>
+                                                  <td>
+                                                    <span>1시간 전</span>
+                                                    <span class="m-0 pl-3">2021.12.03</span>
+                                                  </td>
+                                              </tr>
+                                              <tr>
+                                                  <td>PT-0000000043</td>
+                                                  <td>김세종</td>
+                                                  <td>서울 노원 태릉선수촌</td>
+                                                  <td>
+                                                      <div>
+                                                          <div class="progress" style="height: 6px">
+                                                              <div class="progress-bar bg-success" style="width: 50%"></div>
+                                                          </div>
+                                                      </div>
+                                                  </td>
+                                                  <td>정상 <i class="fas fa-check text-success  mr-2"></i></td>
+                                                  <td>
+                                                    <span>2시간 전</span>
+                                                    <span class="m-0 pl-3">2021.12.03</span>
+                                                  </td>
+                                              </tr>
+                                              <tr>
+                                                  <td>PT-0000000043</td>
+                                                  <td>김세종</td>
+                                                  <td>서울 노원 태릉선수촌</td>
+                                                  <td>
+                                                      <div>
+                                                          <div class="progress" style="height: 6px">
+                                                              <div class="progress-bar bg-success" style="width: 50%"></div>
+                                                          </div>
+                                                      </div>
+                                                  </td>
+                                                  <td>정상 <i class="fas fa-check text-success  mr-2"></i></td>
+                                                  <td>
+                                                    <span>2시간 전</span>
+                                                    <span class="m-0 pl-3">2021.12.03</span>
+                                                  </td>
+                                              </tr>
+                                              <tr>
+                                                <td>PT-0000000043</td>
+                                                <td>김세종</td>
+                                                <td>서울 노원 태릉선수촌</td>
+                                                <td>
+                                                    <div>
+                                                        <div class="progress" style="height: 6px">
+                                                            <div class="progress-bar bg-success" style="width: 50%"></div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>정상 <i class="fas fa-check text-success  mr-2"></i></td>
+                                                <td>
+                                                  <span>2시간 전</span>
+                                                  <span class="m-0 pl-3">2021.12.03</span>
+                                                </td>
+                                              </tr>
+                                              <tr>
+                                                  <td>PT-0000000043</td>
+                                                  <td>김세종</td>
+                                                  <td>서울 노원 태릉선수촌</td>
+                                                  <td>
+                                                      <div>
+                                                          <div class="progress" style="height: 6px">
+                                                              <div class="progress-bar bg-success" style="width: 50%"></div>
+                                                          </div>
+                                                      </div>
+                                                  </td>
+                                                  <td>정상 <i class="fas fa-check text-success  mr-2"></i></td>
+                                                  <td>
+                                                    <span>2시간 전</span>
+                                                    <span class="m-0 pl-3">2021.12.03</span>
+                                                  </td>
+                                              </tr>
+                                              <tr>
+                                                  <td>PT-0000000043</td>
+                                                  <td>김세종</td>
+                                                  <td>서울 노원 태릉선수촌</td>
+                                                  <td>
+                                                      <div>
+                                                          <div class="progress" style="height: 6px">
+                                                              <div class="progress-bar bg-success" style="width: 50%"></div>
+                                                          </div>
+                                                      </div>
+                                                  </td>
+                                                  <td>정상 <i class="fas fa-check text-success  mr-2"></i></td>
+                                                  <td>
+                                                    <span>2시간 전</span>
+                                                    <span class="m-0 pl-3">2021.12.03</span>
+                                                  </td>
+                                              </tr>
+                                              <tr>
+                                                  <td>PT-0000000043</td>
+                                                  <td>김세종</td>
+                                                  <td>서울 노원 태릉선수촌</td>
+                                                  <td>
+                                                      <div>
+                                                          <div class="progress" style="height: 6px">
+                                                              <div class="progress-bar bg-success" style="width: 50%"></div>
+                                                          </div>
+                                                      </div>
+                                                  </td>
+                                                  <td>정상 <i class="fas fa-check text-success  mr-2"></i></td>
+                                                  <td>
+                                                    <span>2시간 전</span>
+                                                    <span class="m-0 pl-3">2021.12.03</span>
+                                                  </td>
+                                              </tr>
+                                              <tr>
+                                                  <td>PT-0000000043</td>
+                                                  <td>김세종</td>
+                                                  <td>서울 노원 태릉선수촌</td>
+                                                  <td>
+                                                      <div>
+                                                          <div class="progress" style="height: 6px">
+                                                              <div class="progress-bar bg-success" style="width: 50%"></div>
+                                                          </div>
+                                                      </div>
+                                                  </td>
+                                                  <td>정상 <i class="fas fa-check text-success  mr-2"></i></td>
+                                                  <td>
+                                                    <span>2시간 전</span>
+                                                    <span class="m-0 pl-3">2021.12.03</span>
+                                                  </td>
+                                              </tr>
+                                          </tbody>
+                                      </table>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>                        
+                  </div>
+              </div>
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-body pb-0 d-flex justify-content-between">
+                                        <div>
+                                            <h4 class="mb-1">감정 그래프</h4>
+                                            <p>시간별, 주간별, 월별</p>
+                                        </div>
+                                        <div>
+                                            <ul>
+                                                <li class="d-inline-block mr-3"><a class="text-dark" href="#">Day</a></li>
+                                                <li class="d-inline-block mr-3"><a class="text-dark" href="#">Week</a></li>
+                                                <li class="d-inline-block"><a class="text-dark" href="#">Month</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="chart-wrapper">
+                                        <canvas id="chart_widget_2"></canvas>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between">
+                                            <div class="w-100 mr-2">
+                                                <h6>긍정적 감정</h6>
+                                                <div class="progress" style="height: 6px">
+                                                    <div class="progress-bar" style="width: 80%; background-color: #00A9A2 !important;"></div>
+                                                </div>
+                                            </div>
+                                            <div class="ml-2 w-100">
+                                                <h6>중립</h6>
+                                                <div class="progress" style="height: 6px">
+                                                    <div class="progress-bar" style="width: 50%; background-color: #f9d423 !important;"></div>
+                                                </div>
+                                            </div>
+                                            <div class="ml-2 w-100">
+                                                <h6>부정적 감정</h6>
+                                                <div class="progress" style="height: 6px">
+                                                    <div class="progress-bar" style="width: 70%; background-color: #fa3636 !important;"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-lg-6 col-md-12">
+                      <div class="card">
+                          <div class="card-body">
+                              <h4 class="card-title">월별 코로나생활격리소 입소자, 퇴소자 수</h4>
+                              <div id="morris-bar-chart"></div>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="col-lg-6 col-md-12">
+                      <div class="card">
+                          <div class="card-body">
+                              <h4 class="card-title">월별 코로나 확진자, 완치자 수</h4>
+                              <div id="morris-bar-chart2"></div>
+                          </div>
+                      </div>
+                  </div>   
+                </div>       
+
+                
+            </div>
+            <!-- #/ container -->
+        </div>
+        <!--**********************************
+            Content body end
+        ***********************************-->
+        
+        
+        <!--**********************************
+            Footer start
+        ***********************************-->
+        <div class="footer">
+            <div class="copyright">
+                <p>Copyright &copy; Designed & Developed by <a href="https://themeforest.net/user/quixlab">Quixlab</a> 2018</p>
+            </div>
+        </div>
+        <!--**********************************
+            Footer end
+        ***********************************-->
+    </div>
+    <!--**********************************
+        Main wrapper end
+    ***********************************-->
+
+    <!--**********************************
+        Scripts
+    ***********************************-->
+    <script src="../static/static-dr/plugins/common/common.min.js"></script>
+    <script src="../static/static-dr/js/custom.min.js"></script>
+    <script src="../static/static-dr/js/settings.js"></script>
+    <script src="../static/static-dr/js/gleek.js"></script>
+    <script src="../static/static-dr/js/styleSwitcher.js"></script>
+
+    <!-- Chartjs -->
+    <script src="../static/static-dr/plugins/chart.js/Chart.bundle.min.js"></script>
+    <!-- Circle progress -->
+    <script src="../static/static-dr/plugins/circle-progress/circle-progress.min.js"></script>
+    <!-- Datamap -->
+    <script src="../static/static-dr/plugins/d3v3/index.js"></script>
+    <script src="../static/static-dr/plugins/topojson/topojson.min.js"></script>
+    <script src="../static/static-dr/plugins/datamaps/datamaps.world.min.js"></script>
+    <!-- Morrisjs -->
+    <script src="../static/static-dr/plugins/raphael/raphael.min.js"></script>
+    <script src="../static/static-dr/plugins/morris/morris.min.js"></script>
+    <!-- Pignose Calender -->
+    <script src="../static/static-dr/plugins/moment/moment.min.js"></script>
+    <script src="../static/static-dr/plugins/pg-calendar/js/pignose.calendar.min.js"></script>
+    <!-- ChartistJS -->
+    <script src="../static/static-dr/plugins/chartist/js/chartist.min.js"></script>
+    <script src="../static/static-dr/plugins/chartist-plugin-tooltips/js/chartist-plugin-tooltip.min.js"></script>
+
+
+
+    <script src="../static/static-dr/js/dashboard/dashboard-1.js"></script>
+
+</body>
+
+</html>
