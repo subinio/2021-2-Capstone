@@ -4,8 +4,8 @@ from django.contrib import auth
 from .models import Doctor, Institution, Patient
 import json
 
-# from .textClassifier import *
-
+#from .textEmotionClassifier import *
+#from .voiceEmotionClassifier import *
 
 member_type=None
 
@@ -30,7 +30,8 @@ def index(request):
   }
   #질문
   # sentence = input("하고싶은 말을 입력해주세요 : ")
-  # print(predict(sentence))   
+  # print(predict(sentence)) 
+  # print(voicePredict('happy.wav')) 
   return render(request, 'index.html', context)
 
 def about(request):

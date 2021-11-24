@@ -116,15 +116,15 @@ def predict(predict_sentence):
                 logits = logits.detach().cpu().numpy()
 
                 if np.argmax(logits) == 0:
-                    test_eval.append("행복이")
+                    test_eval.append("행복")
                 elif np.argmax(logits) == 1:
-                    test_eval.append("중립이")
+                    test_eval.append("중립")
                 elif np.argmax(logits) == 2:
-                    test_eval.append("불안가")
+                    test_eval.append("불안")
                 elif np.argmax(logits) == 3:
-                    test_eval.append("분노이")
+                    test_eval.append("분노")
                 elif np.argmax(logits) == 4:
-                    test_eval.append("슬픔이")
+                    test_eval.append("슬픔")
 
             return test_eval[0]
 #           print(">> 입력하신 내용에서 " + test_eval[0] + " 느껴집니다.")
