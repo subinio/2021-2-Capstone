@@ -1,32 +1,53 @@
-const msgerForm = get(".msger-inputarea");
-const msgerInput = get(".msger-input");
+
 const msgerChat = get(".msger-chat");
 
-const BOT_MSGS = [
-  "Hi, how are you?",
-  "Ohh... I can't understand what you trying to say. Sorry!",
-  "I like to play games... But I don't know how to play!",
-  "Sorry if my answers are not relevant. :))",
-  "I feel sleepy! :("
-];
-
-// Icons made by Freepik from www.flaticon.com
-const BOT_IMG = "https://image.flaticon.com/icons/svg/327/327779.svg";
-const PERSON_IMG = "https://image.flaticon.com/icons/svg/145/145867.svg";
+const BOT_IMG = "../static/images/chatbot.png";
+const PERSON_IMG = "../static/images/maskperson.png";
 const BOT_NAME = "BOT";
-const PERSON_NAME = "Sajad";
+const PERSON_NAME = "{{user.first_name}}님";
 
-msgerForm.addEventListener("submit", event => {
-  event.preventDefault();
 
-  const msgText = msgerInput.value;
-  if (!msgText) return;
+function myRecord() {
+  document.getElementById("record").style.display = "none";
+  document.getElementById("stop").style.display = "";
 
-  appendMessage(PERSON_NAME, PERSON_IMG, "right", msgText);
-  msgerInput.value = "";
+  $.ajax({ // ajax로 서버와 통신
+      type: "GET", // 데이터를 전송하는 방법
+      url: "/chat", // 통신할 url을 지정
+      data: {'what': "record"},
+      dataType: "json",
+      success: function (data) { // 성공
+          console.log("recording...");
+      },
+      error: function (request, status, error) { // 실패
 
-  botResponse();
-});
+      },
+  });
+}
+
+function myStop() {
+  document.getElementById("record").style.display = "";
+  document.getElementById("stop").style.display = "none";
+
+  $.ajax({ // ajax로 서버와 통신
+      type: "GET", // 데이터를 전송하는 방법
+      url: "/chat", // 통신할 url을 지정
+      data: {'what': "stop"},
+      dataType: "json",
+      success: function (data) { // 성공
+        console.log("stop recording");
+        
+        const msgText = data['text'];
+        appendMessage(PERSON_NAME, PERSON_IMG, "right", msgText);
+        botResponse();
+      },
+      error: function (request, status, error) { // 실패
+
+      },
+  });
+
+
+}
 
 function appendMessage(name, img, side, text) {
   //   Simple solution for small apps
@@ -50,14 +71,17 @@ function appendMessage(name, img, side, text) {
 }
 
 function botResponse() {
-  const r = random(0, BOT_MSGS.length - 1);
-  const msgText = BOT_MSGS[r];
+  const msgText = "그랬구나 어쩌구 저쩌구";
   const delay = msgText.split(" ").length * 100;
+  
+  var audio = new Audio("../static/happy.wav");
+  audio.play();
 
   setTimeout(() => {
     appendMessage(BOT_NAME, BOT_IMG, "left", msgText);
   }, delay);
 }
+
 
 // Utils
 function get(selector, root = document) {
@@ -71,6 +95,4 @@ function formatDate(date) {
   return `${h.slice(-2)}:${m.slice(-2)}`;
 }
 
-function random(min, max) {
-  return Math.floor(Math.random() * (max - min) + min);
-}
+

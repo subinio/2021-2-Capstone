@@ -1,11 +1,17 @@
+from django.http.response import JsonResponse
 from django.shortcuts import render,redirect
 from django.contrib.auth.models import User
 from django.contrib import auth
-from .models import Doctor, Institution, Patient
+from .models import Doctor, Institution, Patient, QuestionSet
 import json
+from django.http import HttpResponse, JsonResponse
+import random, datetime
 
-#from .textEmotionClassifier import *
-#from .voiceEmotionClassifier import *
+from .textEmotionClassifier import *
+from .voiceEmotionClassifier import *
+from .recording import *
+from .speechToText import *
+from .textToSpeech import *
 
 member_type=None
 
@@ -31,7 +37,7 @@ def index(request):
   #질문
   # sentence = input("하고싶은 말을 입력해주세요 : ")
   # print(predict(sentence)) 
-  # print(voicePredict('happy.wav')) 
+  # print(voicePredict('temp.wav')) 
   return render(request, 'index.html', context)
 
 def about(request):
@@ -128,9 +134,80 @@ def logout(request):
     return render(request, 'index.html')
 
 
-def chat(request):
+q_depth = 1
+q_parent_id = 0
+rand = 0
 
-    return render(request, 'chat.html')
+def chat(request):
+    global q_depth, q_parent_id, rand
+
+    if request.GET.get('what') == 'record':
+      start()
+      context ={'num':1}
+      return JsonResponse(context)
+    
+
+    elif request.GET.get('what') == 'stop':
+      stop()
+      sentence = kakaoSTT("./myApp/static/patient_answer.wav")
+      
+      textEmo = predict(sentence) 
+      voiceEmo = voicePredict('./myApp/static/patient_answer.wav')
+      print(textEmo)
+      print(voiceEmo)
+
+      if(q_depth==1 or q_depth==4 or q_depth==7):
+        voiceEmo = ""
+        textEmo = ""
+        q_parent_id = 0
+        rand = random.randrange(0,3)
+      if(q_depth==10):
+        q_depth=0
+        return(JsonResponse({'sentence':sentence, 'question':None}))
+      query = QuestionSet.objects.filter(voice_emo=voiceEmo, text_emo=textEmo, depth=q_depth, parent_id=q_parent_id)
+      
+
+      print(query[rand].q_num)
+      print(query[rand].question)
+      
+      question = query[rand].question
+      
+      q_depth += 1
+      q_parent_id = query[rand].q_num
+      rand = 0
+
+      tts = KakaoTTS(question)
+      tts.save("./myApp/static/bot_question.wav")
+
+      context ={'sentence':sentence, 'question':question}
+      return JsonResponse(context)
+
+
+    # 첫 질문
+    query = QuestionSet.objects.filter(voice_emo="", text_emo="", depth=1, parent_id=0)
+    question = query[random.randrange(0,3)].question
+    question = "안녕하세요! " + request.user.get_short_name() + "님, " + question
+
+    tts = KakaoTTS(question)
+    tts.save("./myApp/static/bot_question.wav")
+
+    now = datetime.datetime.now()
+    nowTime = now.strftime('%H:%M')
+
+    q_depth += 1
+    q_parent_id = query[rand].q_num
+    rand = 0
+    return render(request, 'chat.html', {'question':question, 'nowTime':nowTime})
+
+
+# def chat(request):
+
+#     return render(request, 'chat.html')
+
+
+def chatTest(request):
+
+    return render(request, 'chat-test.html')
 
 
 

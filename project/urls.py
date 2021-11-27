@@ -26,6 +26,8 @@ urlpatterns = [
     path('logout/', myApp.views.logout, name='logout'),
     path('chat/', myApp.views.chat, name='chat'),
 
+    path('chatTest/', myApp.views.chatTest, name='chatTest'),
+
 
     path('dashboard/', myApp.views.dashboard, name='dashboard'),
     path('groupCalendar/', myApp.views.groupCalendar, name='groupCalendar'),
